@@ -9,7 +9,10 @@ ps aux --sort=-%cpu | head -10
 ```
 
 **What I observed:**
-> [INSERT YOUR ACTUAL OUTPUT/OBSERVATION HERE]
+
+The top CPU consumer was the -bash shell process (PID 2956, user ubuntu) at 0.3% CPU and 0.5% memory — this is simply the interactive shell session I was using to run the command itself. All other processes in the top 10 showed 0.0% CPU usage, meaning the system was essentially idle at the time of the snapshot.
+
+<img width="1911" height="290" alt="image" src="https://github.com/user-attachments/assets/ce844837-ae0d-4a0a-ad91-c4e776c6449f" />
 
 ### 2. Inspect a specific process
 
@@ -18,11 +21,13 @@ pgrep -a ssh
 ```
 
 **What I observed:**
-> [INSERT YOUR ACTUAL OUTPUT/OBSERVATION HERE]
+
+pgrep -a ssh showed the main sshd daemon (PID 688) configured for EC2 Instance Connect, plus two active SSH sessions for user ubuntu — one on pts/0 and one on pts/1. SSH is running normally with two concurrent logins.
 
 **Screenshot / terminal output:**
 
-> 📸 **INSERT SCREENSHOT HERE**
+<img width="1915" height="162" alt="image" src="https://github.com/user-attachments/assets/16917b55-e817-4b63-843e-0f931a9ba1be" />
+
 
 ---
 
@@ -37,7 +42,8 @@ systemctl status ssh
 ```
 
 **What I observed:**
-> [INSERT YOUR ACTUAL OUTPUT/OBSERVATION HERE]
+
+SSH is active and running fine since boot (~1h 45m), using minimal memory. The ec2-instance-connect.conf file confirms Instance Connect is properly configured. No issues.
 
 ### 2. Check whether the service is enabled
 
@@ -46,11 +52,12 @@ systemctl is-enabled ssh
 ```
 
 **What I observed:**
-> [INSERT YOUR ACTUAL OUTPUT/OBSERVATION HERE]
+
+systemctl is-enabled ssh returned disabled — meaning SSH won't automatically start on the next reboot. It's still running now, but this only affects boot-time startup, not the current session.
 
 **Screenshot / terminal output:**
 
-> 📸 **INSERT SCREENSHOT HERE**
+<img width="627" height="50" alt="image" src="https://github.com/user-attachments/assets/15ba5f27-5e13-4667-8ab5-0577ab949e52" />
 
 ---
 
@@ -63,7 +70,8 @@ journalctl -u ssh -n 50 --no-pager
 ```
 
 **What I observed:**
-> [INSERT YOUR ACTUAL OUTPUT/OBSERVATION HERE]
+
+Logs show normal SSH restarts around reboots and successful Instance Connect logins. One suspicious login attempt as root from IP 45.10.175.77 was rejected before authentication — likely automated scanning, nothing successful.
 
 ### 2. Follow service logs
 
@@ -74,11 +82,12 @@ journalctl -u ssh -f
 Press `Ctrl+C` to stop following the logs.
 
 **What I observed:**
-> [INSERT YOUR ACTUAL OUTPUT/OBSERVATION HERE]
+
+journalctl -u ssh -f shows live SSH activity in real time. Several unknown IPs (167.57.205.111, 186.61.153.88, 181.4.222.63, 41.92.112.32) connected and closed without authenticating — likely automated scans. Two successful logins were accepted for user ubuntu, from IPs 152.58.33.56 and 152.58.31.240, both using the same public key.
 
 **Screenshot / terminal output:**
 
-> 📸 **INSERT SCREENSHOT HERE**
+<img width="1897" height="311" alt="image" src="https://github.com/user-attachments/assets/736bcc15-9fab-4229-9a16-5d357c7d3356" />
 
 ---
 
