@@ -105,5 +105,3 @@ journalctl -u ssh -f shows live SSH activity in real time. Several unknown IPs (
 - `systemctl` helps inspect and manage systemd services.
 - `journalctl` provides useful service logs.
 - Troubleshooting should start with evidence instead of immediately restarting or killing processes.
-
-> **Note:** Replace every placeholder with output from my own machine before considering this day complete.
